@@ -1,7 +1,11 @@
+# @author André M. Ribeiro dos Santos
+# @version 0.0.1
+
 require 'data/set'
 
 module Graph
 
+	# Module to represent an Graph as queue of edges.
 	module EdgesQueue
 
 		private
