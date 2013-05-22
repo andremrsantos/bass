@@ -1,4 +1,4 @@
-module Bass::Graph
+module Bass::GraphBase
 
   # Basic Graph bidirectional edge implementation.
   #
@@ -48,18 +48,12 @@ module Bass::Graph
     end
 
     # @param other [Object] the object to be compared to self
-    # @return [true, false] if the object is the same class, link the same
-    #   nodes and has the same weight
-    def ==(other)
-      eql?(other) && weight == other.weight
-    end
-
-    # @param other [Object] the object to be compared to self
     # @return [true, false] if the object is the same class and link
     #   the same nodes
-    def eql?(other)
-      other.kind_of?(self.class) && self.nodes  == other.nodes
+    def ==(other)
+      other.kind_of?(self.class) && other.nodes == self.nodes
     end
+    alias_method :eql?, :==
 
     # @param other [Edge] the other edge to be compared.
     # @return [Integer]   the weight comparison: -1 if less, 0 if equal and

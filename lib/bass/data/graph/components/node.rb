@@ -4,32 +4,30 @@
 require 'forwardable'
 require 'bass/data/set'
 
-module Bass::Graph
+module Bass::GraphBase
 
   # Module with the basic behavior of the Graph Nodes implementations.
-  # 
+  #
   # @attr_reader [Object] The identification label.
   module Node
     extend Forwardable
 
-    attr_reader :label
-    
+    attr_reader :label, :attrs
+
     # Basic abstract constructor for an Node implementation.
-    # 
+    #
     # @param label [Object] The identification label.
     # @param attrs [Hash] Node attributes.
     # @return The Node instance.
-    # 
+    #
     # @abstract
     def initialize(label, attrs = {})
       @label = label
       @attrs  = attrs
     end
 
-    def_delegators :@attrs, :[], :[]=
-
     # Add an edge
-    # 
+    #
     # @param edge [Edge] The edge to be added
     # @return [Node] self
     def push_edge(edge)
@@ -37,7 +35,7 @@ module Bass::Graph
     end
 
     # Remove an edge
-    # 
+    #
     # @param edge [Edge] The edge to be removed
     # @return [Edge] edge
     def pull_edge(edge)
@@ -45,10 +43,16 @@ module Bass::Graph
     end
 
     # Collection of edges
-    # 
+    #
     # @return [Array<Edge>] Collection of edges related to the Node.
     def edges
       raise NotImplementedError, 'Node#edges must be implemented'
+    end
+
+    # @param [Edge] edge ti be queried
+    # @return [true, false] if collection of edges include *edge*
+    def has_edge?(edge)
+      edges.include?(edge)
     end
 
     # @return [Integer] the number of edges included in this node.
@@ -58,9 +62,9 @@ module Bass::Graph
 
     # @return [String] Node string representation.
     def to_s
-      string = "Node %5s\n{" % label
+      string = "Node %5s  {" % label
       string << @attrs.map { |key, value| '%5s : %5s' }.join(',')
-      string << "}\n"
+      string << "} | edges: "
       string << edges.map { |edge| edge.other(label) }.join(' -> ')
     end
 
@@ -68,10 +72,10 @@ module Bass::Graph
     def inspect
       '<%s : %s>' % [self.class, label]
     end
-  
+
     # Node implementation for edge list graph implementation. Uses an Bass::Set
     # to represent the collection of edges related to the Node.
-    # 
+    #
     # @see Bass::Set
     class QueueNode
       include Node
@@ -95,7 +99,12 @@ module Bass::Graph
       # (see Node#edges)
       def edges
         @edges.to_a
-      end 
+      end
+
+      # (see Node#has_edge?)
+      def has_edge?(edge)
+        @edges.include? edge
+      end
 
     end
 
@@ -104,25 +113,30 @@ module Bass::Graph
     class AdjacencyNode
       include Node
       @@counter = -1
+      @@index_label = []
+      @@label_index = {}
 
       # @param attrs [Hash] Node attributes.
       # @return The Node instance.
-      def initialize(attrs = {})
-        super(@@counter += 1, attrs)
+      def initialize(label, attrs = {})
+        super
+        @@index_label[@@counter += 1] = label
+        @@label_index[label] = @@counter
         @edges = Array.new(@@counter)
       end
 
       # (see Node#push_edge)
       def push_edge(edge)
         raise ArgumentError, 'Need an edge' unless edge.kind_of?(Edge)
-        @edges[edge.other(label)] = edge unless @edges[edge.other(label)]
+        other = to_index edge.other(label)
+        @edges[other] = edge unless @edges[other]
         self
       end
 
       # (see Node#pull_edge)
       def pull_edge(edge)
         raise ArgumentError, 'Need an edge' unless edge.kind_of?(Edge)
-        @edges[edge.other(label)] = nil
+        @edges[to_index edge.other(label)] = nil
       end
 
       # (see Node#edges)
@@ -130,6 +144,25 @@ module Bass::Graph
         @edges.select { |edge| edge.kind_of? Edge }
       end
 
+      # (see Node#has_edge?)
+      def has_edge?(edge)
+        raise ArgumentError, 'Need an edge' unless edge.kind_of?(Edge)
+        ! @edges[edge.other(label)].nil?
+      end
+
+      private
+
+      # @param label [Integer] Node identification label
+      # @return [Integer] the position of an node in the matrix
+      def to_index(label)
+        @@label_index[label]
+      end
+
+      # @param index [Integer] position of in the Array
+      # @return [Object] the label of the node at index
+      def to_label(index)
+        @@index_label[index]
+      end
     end
 
   end
