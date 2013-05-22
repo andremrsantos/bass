@@ -10,6 +10,7 @@ module Graph
 
 		private
 
+		# Create a new *Node* model
 		def new_node
 			{ attr: {}, edges: Set.new }	
 		end

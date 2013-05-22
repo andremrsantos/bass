@@ -1,4 +1,4 @@
-module Graph
+module Bass::Graph
 
 	class Edge
 		include Comparable
@@ -6,7 +6,7 @@ module Graph
 		attr_reader :weight
 
 		def initialize(one, other, weight = 1.0)
-			@one, @other = (one.hash < other.hash)? [one, hash] : [hash, one]
+			@one, @other = (one.hash < other.hash)? [one, other] : [other, one]
 			@weight = weight
 		end
 

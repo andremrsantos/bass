@@ -1,5 +1,8 @@
-module Graph; end
+module Bass
+  module Graph; end
+end
 
-require 'data/graph/edge'
-require 'data/graph/base'
-require 'data/graph/edges_queue'
+require 'bass/data/graph/edge'
+require 'bass/data/graph/node'
+#require 'bass/data/graph/base'
+#require 'bass/data/graph/edges_queue'
