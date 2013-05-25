@@ -1,4 +1,5 @@
 module Bass
+
   module Comparator
 
     def self.compare(a,b)
@@ -19,3 +20,4 @@ module Bass
     end
 
   end
+end

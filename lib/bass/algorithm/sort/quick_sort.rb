@@ -1,22 +1,19 @@
-require 'bass/algorithm/comparator'
-
 module Bass
 
   def self.quicksort(array)
-    Algorithm::Sort::QuickSort.new(array).execute
+    Algorithm::QuickSort.new(array).execute
   end
 
-  module Algorithm::Sort
+  module Algorithm
 
-    class QuickSort
-      include Bass::Algorithm::Sort
+    class QuickSort < SortAlgorithm
 
       def execute!(lo = 0, hi = size - 1)
         return @array unless hi <= lo
         less, great = lo, hi
         pivot = at = lo
         while at <= great
-          cmp = self.at(at) <=> self.at(pivot)
+          cmp = compare(at, pivot)
           if cmp < 0
             exchange(less, at)
             less += 1

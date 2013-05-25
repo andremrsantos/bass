@@ -65,7 +65,10 @@ module Bass::GraphBase
       string = "Node %5s  {" % label
       string << @attrs.map { |key, value| '%5s : %5s' }.join(',')
       string << "} | edges: "
-      string << edges.map { |edge| edge.other(label) }.join(' -> ')
+      edges_list = edges.map do |edge| 
+                '%s : %2.2f' % [edge.other(label), edge.weight]
+              end
+      string << edges_list.join(' -> ')
     end
 
     # @return [String] Node inspection.

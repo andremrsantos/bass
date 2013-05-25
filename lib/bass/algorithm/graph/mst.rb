@@ -6,23 +6,30 @@ module Bass
 
   def self.minimal_spanning_tree(graph, strategy = :primm)
     mst = case strategy
-          when :kruskal then Algorithm::Graph::KruskalMST.new(graph)
-          else Algorithm::Graph::PrimmMST.new(graph)
+          when :kruskal then Algorithm::KruskalMST.new(graph)
+          else Algorithm::PrimmMST.new(graph)
           end
     mst.execute
   end
 
-  module Algorithm::Graph
+  module Algorithm
 
-    class MST
-      include Bass::Algorithm::Graph
-      attr_reader :mst
+    class MST < GraphAlgorithm
+      attr_reader :tree
+
+      protected
+
+      def add_edge(edge)
+        u, v = edge.nodes
+        tree.add_edge(u, v, edge.weight)
+      end
 
       private
 
       def reset
         super
-        @mst = graph.class.new
+        @tree = Bass::Graph.new
+        graph.each_node {|node| tree.add_node(node)}
       end
 
     end
@@ -33,14 +40,9 @@ module Bass
       def execute!
         start = graph.nodes.first
         set_on_tree(start, true)
-        edge_heap = BinaryHeap.new(graph.adjacent(start))
-        while mst.order < graph.order && ! edge_heap.empty?
-          if valid?(edge = edge_heap.pull)
-            u, v = edge.nodes
-            mst.add_edge(u, v, edge.weight)
-          end
-        end
-        mst
+        @heap = BinaryHeap.new(graph.adjacent(start))
+        add_edge(edge) while tree.size < graph.order-1 && ! @heap.empty?
+        tree
       end
 
       private
@@ -50,23 +52,43 @@ module Bass
         ( on_tree(u) && !on_tree(v) ) || ( on_tree(v) && !on_tree(u) )
       end
 
+      def add_edge(edge)
+        if valid?(edge)
+          super(edge)
+          other = next_node(edge)
+          set_on_tree(other, true)
+          graph.adjacent(other).each { |edge| @heap.push edge }
+        end
+      end
+
+      def next_node(edge)
+        other = edge.either
+        other = on_tree(other) ? edge.other(other) : other 
+      end
+
     end
 
-    class KruskalMST
+    class KruskalMST < MST
 
       def execute!
+        @union = Bass::Union.new(graph.nodes)
         edges = Bass.quicksort(graph.edges)
-        while @union.count < graph.size
+        add_edge(edge)  while @union.count > 1 && !edges.empty?
+        tree
       end
 
       private
 
-      def reset
-        @union = Bass::Union.new(graph.nodes)
-      end
-
       def valid?(edge)
         u, v = edge.nodes
+        ! @union.connected?(u, v)
+      end
+
+      def add_edge(edge)
+        if valid?(edge)
+          super(edge)
+          @union.connect(edge.nodes)
+        end
       end
 
     end

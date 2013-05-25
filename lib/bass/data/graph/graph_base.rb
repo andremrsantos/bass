@@ -37,6 +37,11 @@ module Bass
 			get_node(node).degree if has_node?(node)
 		end
 
+		# @return [Float] the sum of all edges weight
+		def weight
+			edges.map{ |edge| edge.weight }.reduce(:+)
+		end
+
 		# @param node [Object] the queried node
 		# @return [Array<Edge>] the collection of edges adjacent to the node
 		def adjacent(node)

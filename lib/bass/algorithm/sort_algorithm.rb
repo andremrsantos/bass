@@ -1,14 +1,14 @@
-require 'bass/algorithm/comparator'
-require 'bass/algorithm/algorithm'
+require 'bass/comparator'
+require 'bass/algorithm'
 
-module Bass
+module Bass::Algorithm
 
-  module Algorithm::Sort
+  class SortAlgorithm < Base
+    
+    attr_reader :array, :order
 
-    attr_reader :array
-
-    def initialize(item_or_items, order = :min)
-      @comparator = Bass::Comparator.get(order)
+    def initialize(item_or_items, order = :asc)
+      @order = (order == :desc)? -1 : 1
       @array = Array(item_or_items)
     end
 
@@ -25,7 +25,7 @@ module Bass
     end
 
     def compare(x, y)
-      @comparator.call(x, y)
+      order * Comparator.compare(@array[x], @array[y])
     end
 
     def exchange(from, to)

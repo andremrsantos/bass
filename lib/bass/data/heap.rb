@@ -1,4 +1,4 @@
-require 'bass/algorithm/comparator'
+require 'bass/comparator'
 
 module Bass
 

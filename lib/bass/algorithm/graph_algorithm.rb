@@ -1,10 +1,9 @@
-require 'bass/algorithm/algorithm'
+require 'bass/algorithm'
 require 'bass/data/graph'
 
 module Bass::Algorithm
 
-  module Graph
-    include Bass::Algorithm
+  class GraphAlgorithm < Base
 
     attr_reader :graph
 
@@ -13,7 +12,7 @@ module Bass::Algorithm
         raise ArgumentError.new('Works only on graphs')
       end
       @graph = graph
-      super
+      super()
     end
 
     private
@@ -25,3 +24,5 @@ module Bass::Algorithm
   end
 
 end
+
+require 'bass/algorithm/graph/mst'

@@ -15,10 +15,11 @@ module Bass
     end
 
     def push(key, value=key)
-      raise ArgumentError.new('Key index taken') if contains?(key)
-      append_tail(key, value)
-      grew
-      swim(last)
+      unless contains?(key)
+        append_tail(key, value)
+        grow
+        swim(last)
+      end
       self
     end
 
@@ -44,8 +45,8 @@ module Bass
 
     def clone
       clone = super
-      clone.instance_variable_set(:@heap = @heap.clone)
-      clone.instance_variable_set(:@heap = @keys.clone)
+      clone.instance_variable_set(:@heap, @heap.clone)
+      clone.instance_variable_set(:@heap, @keys.clone)
       clone
     end
 
@@ -61,7 +62,7 @@ module Bass
 
     def remove_tail
       tail = @heap.pop
-      @keys.delete(head)
+      @keys.delete(tail)
       tail
     end
 
@@ -92,8 +93,8 @@ module Bass
     end
 
     def sons(at)
-      left_son = 2 * node + 1
-      [left_son + left_son + 1]
+      left_son = 2 * at + 1
+      [left_son, left_son + 1]
     end
 
     def swim(at)
@@ -108,15 +109,15 @@ module Bass
     end
 
     def ancestor?(ancestor, descendent)
-      super(@keys[@heap[ancestor]], @keys[@heap[descendent]])
+      super(@keys[@heap[ancestor]][:value], @keys[@heap[descendent]][:value])
     end
 
     def exchange(from, to)
       tmp = @heap[from]
       @heap[from] = @heap[to]
       @heap[to] = tmp
-      @keys[@heap[from]] = from
-      @keys[@heap[to]] = to
+      @keys[@heap[from]][:at] = from
+      @keys[@heap[to]][:at] = to
     end
 
   end
