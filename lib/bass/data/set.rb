@@ -78,6 +78,14 @@ module Bass
       self
     end
 
+    def clone
+      clone = super
+      items = {}
+      each { |item| items[item] = @items[item].clone }
+      clone.instance_variable_set(:@items, items)
+      clone
+    end
+
   end
 
 end

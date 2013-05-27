@@ -3,6 +3,7 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 
 require 'bass/data/graph'
 require 'bass/algorithm/graph_algorithm'
+require 'bass/algorithm/graph_search'
 
 graph = Bass::Graph.new()
 %w(a b c d e f).each { |node| graph.add_node(node) }
@@ -19,6 +20,19 @@ graph.add_edge('d','f')
 
 puts graph
 puts
-puts Bass.minimal_spanning_tree(graph, :primm)
+puts tree = Bass.minimal_spanning_tree(graph, :primm)
 puts 
 puts Bass.minimal_spanning_tree(graph, :kruskal)
+puts
+puts Bass.bread_first_search(graph)
+puts 
+puts Bass.depth_first_search(graph)
+puts 
+puts Bass.has_cycle?(graph)
+puts
+puts Bass.eccentricity(graph)
+puts
+puts Bass.tree_center(tree).inspect
+puts 
+puts Bass::Algorithm::KruskalMST.benchmark(100, graph)
+puts 

@@ -35,13 +35,13 @@ module Bass
     end
 
     class PrimmMST < MST
-      default_attr on_tree: false
+      properties on_tree: false
 
       def execute!
         start = graph.nodes.first
         set_on_tree(start, true)
         @heap = BinaryHeap.new(graph.adjacent(start))
-        add_edge(edge) while tree.size < graph.order-1 && ! @heap.empty?
+        add_edge(@heap.pull) while tree.size < graph.order-1 && ! @heap.empty?
         tree
       end
 
@@ -73,7 +73,7 @@ module Bass
       def execute!
         @union = Bass::Union.new(graph.nodes)
         edges = Bass.quicksort(graph.edges)
-        add_edge(edge)  while @union.count > 1 && !edges.empty?
+        add_edge(edges.shift) while @union.count > 1 && !edges.empty?
         tree
       end
 
@@ -87,7 +87,7 @@ module Bass
       def add_edge(edge)
         if valid?(edge)
           super(edge)
-          @union.connect(edge.nodes)
+          @union.connect(*edge.nodes)
         end
       end
 

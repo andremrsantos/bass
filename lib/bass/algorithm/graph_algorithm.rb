@@ -1,10 +1,11 @@
 require 'bass/algorithm'
+require 'bass/property'
 require 'bass/data/graph'
 
 module Bass::Algorithm
 
   class GraphAlgorithm < Base
-
+    include Property::Collection
     attr_reader :graph
 
     def initialize(graph)
@@ -15,10 +16,14 @@ module Bass::Algorithm
       super()
     end
 
+    def to_s
+      "#{super}\n" << _properties.map{|k,v| 'Node %5s : %s' % [k, v]}.join("\n")
+    end
+
     private
 
     def reset
-      super graph.nodes
+      reset_properties(graph.nodes)
     end
 
   end
@@ -26,3 +31,6 @@ module Bass::Algorithm
 end
 
 require 'bass/algorithm/graph/mst'
+require 'bass/algorithm/graph_search'
+require 'bass/algorithm/graph/eccentricity'
+require 'bass/algorithm/graph/cyclic'

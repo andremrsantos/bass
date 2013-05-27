@@ -140,8 +140,20 @@ module Bass
 			"< #{self.class} >\n" << nodes.map { |node| get_node(node) }.join("\n")
 		end
 
-		private
+		def inspect
+			"<#{self.class} order:#{order} size:#{size}>"
+		end
 
+		def clone
+			clone = super
+			nodes = {}
+			each_node { |node| nodes[node] = get_node(node).clone }
+			clone.instance_variable_set(:@nodes, nodes)
+			clone
+		end
+
+		private
+		
 		# Return the node implementation instance
 		def get_node(node)
 			@nodes[node]

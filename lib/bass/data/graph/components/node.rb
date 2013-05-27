@@ -76,6 +76,16 @@ module Bass::GraphBase
       '<%s : %s>' % [self.class, label]
     end
 
+    def clone
+      clone = super
+      attrs = {}
+      @attrs.each { |k,v| attrs[k] = v.clone if v.nil? }
+      clone.instance_variable_set(:@attrs, attrs)
+      edges = self.instance_variable_get(:@edges).clone
+      clone.instance_variable_set(:@edges, edges )
+      clone
+    end
+
     # Node implementation for edge list graph implementation. Uses an Bass::Set
     # to represent the collection of edges related to the Node.
     #
