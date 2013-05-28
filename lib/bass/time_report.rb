@@ -8,9 +8,10 @@ module Bass
     attr_reader :description, :repetition, :data
     properties min: nil, max: nil, avg: nil, dev: nil
 
-    def initialize(description, repetition = 100, &block)
+    def initialize(description, algo, repetition = 100, &block)
       super()
       @description = description
+      @args = get_report_data(algo)
       @repetition  = Integer(repetition)
       @block = block
       @data = []
@@ -43,16 +44,29 @@ module Bass
     end
 
     def to_s(header = true)
-      line   = "%5s\t%5s\t%5s\t%5s\t%5s\t%5s\n"
-      string = ''
-      string << line % ['DESC', 'N', 'MIN', 'MAX', 'AVG', 'DEV'] if header
-      string << line % [description, repetition, min, max, avg, dev]
+      "%s\t%s\t%s\t%s\t%s\t%s\t%s\n" % [description, repetition, min, max, avg, dev, data_s]
     end
 
     def self.time
       start = Time.now
       yield
       Time.now - start
+    end
+
+    private
+
+    def get_report_data(obj)
+      if obj.kind_of?(Hash)
+        obj
+      elsif obj.respond_to?(:report_data) 
+        obj.report_data
+      else 
+        { arg: obj.inspect }
+      end
+    end
+
+    def data_s
+      @args.values.join("\t")
     end
 
   end

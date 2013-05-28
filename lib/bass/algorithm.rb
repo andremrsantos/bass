@@ -24,9 +24,9 @@ module Bass
       end
 
       def self.benchmark(repetition = 100, *args)
-        description = "#{self} benchmark with " 
-        description << args.map { |arg| arg.inspect }.join(';')
-        TimeReport.new(description, repetition) { self.new(*args).execute }
+        description = "#{self} benchmark"
+        algo = self.new(*args)
+        TimeReport.new(description, algo, repetition) { algo.execute }
       end
 
       private

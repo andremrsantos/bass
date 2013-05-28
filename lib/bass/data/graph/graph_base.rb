@@ -144,6 +144,10 @@ module Bass
 			"<#{self.class} order:#{order} size:#{size}>"
 		end
 
+		def report_data
+			{ order: order, size: size }
+		end
+
 		def clone
 			clone = super
 			nodes = {}

@@ -20,6 +20,10 @@ module Bass::Algorithm
       "#{super}\n" << _properties.map{|k,v| 'Node %5s : %s' % [k, v]}.join("\n")
     end
 
+    def report_data
+      { graph_order: graph.order, graph_size: graph.size }
+    end
+
     private
 
     def reset
@@ -30,6 +34,7 @@ module Bass::Algorithm
 
 end
 
+require 'bass/algorithm/graph/generator'
 require 'bass/algorithm/graph/mst'
 require 'bass/algorithm/graph_search'
 require 'bass/algorithm/graph/eccentricity'

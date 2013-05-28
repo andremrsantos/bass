@@ -41,6 +41,10 @@ module Bass
         center
       end
 
+      def post
+        graph.size - graph.order + 1
+      end
+
     end
 
     class EccentricityTree < Eccentricity
