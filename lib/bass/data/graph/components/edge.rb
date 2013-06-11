@@ -66,7 +66,7 @@ module Bass::GraphBase
 
     # @return [String] the edge representation
     def to_s
-      '(%s, %s : %d)' % [@one, @other, weight]
+      '(%s, %s : %f)' % [@one, @other, weight]
     end
 
     # @return (see #to_s)
@@ -87,7 +87,7 @@ module Bass::GraphBase
     def initialize(from, to, weight = 1.0)
       @one = from
       @other = to
-      @weigth = weight
+      @weight = weight
     end
 
     # @return [Object] the origin node

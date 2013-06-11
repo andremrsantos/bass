@@ -1,34 +1,23 @@
-module A
+lib = File.expand_path('../../lib', __FILE__)
+$LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 
-  def new(*args, &block)
-    instance = super
-    puts '---> AT NEW'
-    instance.instance_variable_set(:@tmp, 'hi')
-    puts instance.instance_variable_get(:@tmp)
-    instance
-  end
+require 'bass/algorithm/graph_algorithm'
+require 'bass/data/graph'
 
-end
+graph = Bass::Digraph.new
+graph.add_node(:source)
+graph.add_node(:exit)
+(1..4).each { |i| graph.add_node(i) }
+graph.add_edge(:source, 1, 50)
+graph.add_edge(:source, 3, 40)
+graph.add_edge(1, 2, 60)
+graph.add_edge(3, 4, 60)
+graph.add_edge(3, 2, 70)
+graph.add_edge(2, :exit, 30)
+graph.add_edge(4, :exit, 50)
 
-class B
-  extend A
+puts graph
 
-  def initialize(lalala = 10)
-    puts lalala
-    puts @tmp.inspect
-  end
-
-end
-
-class C < B
-
-  def initialize
-    puts @tmp
-  end
-
-end
-
-puts '-------B-------'
-B.new
-puts '-------C-------'
-C.new
+flow = Bass::Algorithm::MaxFlow.new(graph)
+puts flow.execute
+puts flow
