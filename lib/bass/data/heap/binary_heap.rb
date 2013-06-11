@@ -3,7 +3,7 @@ module Bass
   class BinaryHeap
     include HeapBase
 
-    def initialize(kind = :min, item_or_items)
+    def initialize(kind = :min, item_or_items = [])
       super(kind)
       @heap = []
       @keys = {}
@@ -39,7 +39,7 @@ module Bass
     def change(key, value)
       raise ArgumentError.new('No such key') unless contains?(key)
       @keys[key][:value] = value
-      at = @keys[key][:position]
+      at = @keys[key][:at]
       sink(at) and swim(at)
     end
 

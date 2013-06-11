@@ -35,13 +35,17 @@ module Bass
     end
 
     class PrimmMST < MST
-      properties on_tree: false
+      properties on_tree: false, edge_to: nil
 
       def execute!
-        start = graph.nodes.first
-        set_on_tree(start, true)
-        @heap = BinaryHeap.new(graph.adjacent(start))
-        add_edge(@heap.pull) while tree.size < graph.order-1 && ! @heap.empty?
+        look(graph.nodes.first)
+      end
+
+      def look(root)
+        @heap = Bass::BinaryHeap.new()
+        set_on_tree(root, true)
+        scan(root)
+        scan(@heap.pull) until @heap.empty?
         tree
       end
 
@@ -52,18 +56,22 @@ module Bass
         ( on_tree(u) && !on_tree(v) ) || ( on_tree(v) && !on_tree(u) )
       end
 
-      def add_edge(edge)
-        if valid?(edge)
-          super(edge)
-          other = next_node(edge)
-          set_on_tree(other, true)
-          graph.adjacent(other).each { |edge| @heap.push edge }
-        end
+      def add_edge(node)
+        return nil if edge_to(node).nil?
+        super(edge_to(node))
       end
 
-      def next_node(edge)
-        other = edge.either
-        other = on_tree(other) ? edge.other(other) : other 
+      def scan(node)
+        set_on_tree(node, true)
+        add_edge(node)
+        graph.adjacent(node).each do |edge|
+          other = edge.other(node)
+          next if on_tree(other)
+          if edge_to(other).nil? || edge < edge_to(other)
+            set_edge_to(other, edge)
+            @heap.contains?(other) ? @heap.change(other, edge) : @heap.push(other, edge)
+          end
+        end
       end
 
     end

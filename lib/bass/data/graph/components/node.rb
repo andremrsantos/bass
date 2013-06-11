@@ -55,6 +55,10 @@ module Bass::GraphBase
       edges.include?(edge)
     end
 
+    def get_edge(edge)
+      edges.find { |i| i == edge }
+    end
+
     # @return [Integer] the number of edges included in this node.
     def degree
       edges.size
@@ -65,7 +69,7 @@ module Bass::GraphBase
       string = "Node %5s  {" % label
       string << @attrs.map { |key, value| '%5s : %5s' }.join(',')
       string << "} | edges: "
-      edges_list = edges.map do |edge| 
+      edges_list = edges.map do |edge|
                 '%s : %2.2f' % [edge.other(label), edge.weight]
               end
       string << edges_list.join(' -> ')
@@ -117,6 +121,10 @@ module Bass::GraphBase
       # (see Node#has_edge?)
       def has_edge?(edge)
         @edges.include? edge
+      end
+
+      def get_edge(edge)
+        @edges.get(edge)
       end
 
     end

@@ -3,6 +3,7 @@ module Bass
   # Graph implementation, where a set of nodes (V) is connected by a set of
   # edges (E), where for each edge (u,v) u, v C V and (u,v) == (v,u)
   class Graph
+    include GraphBase
 
     # @param structure [Class] the graph storing structure.
     # @see GraphBase::AdjacencyGraph

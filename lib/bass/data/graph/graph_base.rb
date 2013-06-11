@@ -31,6 +31,10 @@ module Bass
 			get_node(node).attrs unless has_node?(node)
 		end
 
+		def get_edge(from, to)
+			get_node(from).get_edge new_edge(from, to)
+		end
+
 		# @param node [Object] the queried node
 		# @return [Integer] the degree of the queried node
 		def degree(node)
@@ -157,7 +161,7 @@ module Bass
 		end
 
 		private
-		
+
 		# Return the node implementation instance
 		def get_node(node)
 			@nodes[node]

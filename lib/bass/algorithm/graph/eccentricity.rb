@@ -36,7 +36,7 @@ module Bass
           elsif eccentricity(node) < min_eccentricity
             min_eccentricity = eccentricity(node)
             center = [node]
-          end 
+          end
         end
         center
       end
