@@ -20,19 +20,11 @@ graph.add_edge('d','f')
 
 puts graph
 puts
-puts tree = Bass.minimal_spanning_tree(graph, :primm)
-puts 
-puts Bass.minimal_spanning_tree(graph, :kruskal)
+puts '--- Tabela de Excentricidade ---'
+puts ecc = Bass.eccentricity(graph)
 puts
-puts Bass.bread_first_search(graph)
-puts 
-puts Bass.depth_first_search(graph)
-puts 
-puts Bass.has_cycle?(graph)
+puts '--- Centro ---'
+puts ecc.center.inspect
 puts
-puts Bass.eccentricity(graph)
-puts
-puts Bass.tree_center(tree).inspect
-puts 
-puts Bass::Algorithm::KruskalMST.benchmark(100, graph)
-puts 
+puts '--- Posto ---'
+puts ecc.post
