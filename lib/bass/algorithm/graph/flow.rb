@@ -7,6 +7,12 @@ module Bass::Algorithm
   class MaxFlow < GraphAlgorithm
     attr_reader :residues
 
+    def initialize(graph, source=:source, exit=:exit)
+      super(graph)
+      @source = source
+      @exit = exit
+    end
+
     def reset
       super
       @residues = graph.clone
@@ -40,16 +46,16 @@ module Bass::Algorithm
 
     def to_s
       str = "<#{self.class}>\n---Network flow: %f\n---Flow:---\n" % @system_flow
-      str << @flow.map { |key, value| "%6s -> %6s : %f / %f" % [*key.nodes, key.weight, value] }.join("\n")
+      str << @flow.map { |key, value| "%6s -> %6s : %02.2f / %02.2f" % [*key.nodes, value, key.weight ] }.join("\n")
     end
 
     private
 
     def find_path
-      nodes = { source: { parent: nil, level: 0 } }
+      nodes = { @source => { parent: nil, level: 0 } }
 
-      stack = [:source]
-      until stack.empty? || !nodes[:exit].nil?
+      stack = [@source]
+      until stack.empty? || !nodes[@exit].nil?
         node = stack.pop
         residues.adjacent(node).each do |edge|
           next unless nodes[edge.to].nil? && room(node, edge.to) > 0
@@ -57,12 +63,12 @@ module Bass::Algorithm
           stack << edge.to
         end
       end
-      build_path(nodes) unless nodes[:exit].nil?
+      build_path(nodes) unless nodes[@exit].nil?
     end
 
     def build_path(nodes)
       path = []
-      pointer = :exit
+      pointer = @exit
       until pointer.nil?
         path.unshift pointer
         pointer = nodes[pointer][:parent]
